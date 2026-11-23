@@ -51,6 +51,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No text provided." }, { status: 400 });
     }
 
+    // Input bounds validation (max 50,000 characters)
+    if (text.length > 50000) {
+      return NextResponse.json(
+        { error: "Text exceeds maximum character limit of 50,000 characters." },
+        { status: 413 }
+      );
+    }
+
     if (!action || !ACTION_PROMPTS[action]) {
       return NextResponse.json({ error: "Invalid action specified." }, { status: 400 });
     }

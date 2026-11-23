@@ -11,12 +11,51 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const contentType = request.headers.get("content-type") || "";
+    if (!contentType.includes("multipart/form-data")) {
+      return NextResponse.json(
+        { error: "Invalid Content-Type. Expected multipart/form-data." },
+        { status: 400 }
+      );
+    }
+
     const formData = await request.formData();
     const audioFile = formData.get("audio") as File | null;
     const language = (formData.get("language") as string) || "en-US";
 
     if (!audioFile) {
       return NextResponse.json({ error: "No audio file provided." }, { status: 400 });
+    }
+
+    // Security validation: size limit (max 25MB)
+    const MAX_SIZE = 25 * 1024 * 1024;
+    if (audioFile.size > MAX_SIZE) {
+      return NextResponse.json(
+        { error: "Audio file exceeds maximum size limit of 25MB." },
+        { status: 413 }
+      );
+    }
+
+    // Security validation: audio mime-type check
+    const allowedTypes = [
+      "audio/webm",
+      "audio/ogg",
+      "audio/wav",
+      "audio/wave",
+      "audio/x-wav",
+      "audio/mp3",
+      "audio/mpeg",
+      "audio/mp4",
+      "audio/m4a",
+      "audio/aac",
+      "audio/flac",
+    ];
+    const fileType = audioFile.type?.toLowerCase().split(";")[0].trim();
+    if (fileType && !allowedTypes.includes(fileType)) {
+      return NextResponse.json(
+        { error: `Invalid audio format: ${fileType}. Supported formats include WebM, WAV, MP3, and Ogg.` },
+        { status: 415 }
+      );
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
