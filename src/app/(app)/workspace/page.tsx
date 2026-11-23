@@ -13,9 +13,10 @@ import {
   Square,
   RotateCcw,
   BookmarkCheck,
+  Wand2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +24,7 @@ import { MicButton } from "@/components/mic-button";
 import { AudioWaveform } from "@/components/audio-waveform";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 import { useAudioRecorder } from "@/hooks/use-audio-recorder";
-import { LANGUAGES, WRITING_MODES, type WritingMode } from "@/lib/types";
+import { LANGUAGES, WRITING_MODES, AI_ACTIONS, type WritingMode } from "@/lib/types";
 import { addHistoryEntry, getSettings } from "@/lib/storage";
 import { wordCount, charCount, formatDuration, generateId, downloadTextFile } from "@/lib/utils";
 
@@ -33,15 +34,21 @@ export default function WorkspacePage() {
   const [writingMode, setWritingMode] = useState<WritingMode>("general");
   const [isProcessing, setIsProcessing] = useState(false);
   const [useGemini, setUseGemini] = useState(false);
+  const [activeAIAction, setActiveAIAction] = useState<string | null>(null);
+
+  const settings = typeof window !== "undefined" ? getSettings() : null;
 
   useEffect(() => {
-    const s = getSettings();
-    setLanguage(s.language);
-    setWritingMode(s.writingMode);
+    if (settings) {
+      setLanguage(settings.language);
+      setWritingMode(settings.writingMode);
+    }
   }, []);
 
   const handleResult = useCallback((transcript: string, isFinal: boolean) => {
-    if (isFinal) setText((prev) => (prev ? prev + " " + transcript : transcript));
+    if (isFinal) {
+      setText((prev) => (prev ? prev + " " + transcript : transcript));
+    }
   }, []);
 
   const {
@@ -70,35 +77,98 @@ export default function WorkspacePage() {
     resumeRecording,
   } = useAudioRecorder();
 
+  const transcribeWithGemini = useCallback(async (blob: Blob) => {
+    setIsProcessing(true);
+    try {
+      const fd = new FormData();
+      fd.append("audio", blob, "recording.webm");
+      fd.append("language", language);
+      const res = await fetch("/api/transcribe", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Transcription failed");
+        return;
+      }
+      setText((p) => (p ? p + " " + data.text : data.text));
+      toast.success("Transcribed with Gemini AI");
+    } catch {
+      toast.error("Transcription service unavailable");
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [language]);
+
   useEffect(() => {
     if (audioBlob && useGemini) {
-      (async () => {
-        setIsProcessing(true);
-        try {
-          const fd = new FormData();
-          fd.append("audio", audioBlob, "recording.webm");
-          fd.append("language", language);
-          const res = await fetch("/api/transcribe", { method: "POST", body: fd });
-          const data = await res.json();
-          if (!res.ok) { toast.error(data.error); return; }
-          setText((p) => (p ? p + " " + data.text : data.text));
-          toast.success("Transcribed successfully");
-        } catch { toast.error("Transcription service unavailable"); }
-        finally { setIsProcessing(false); }
-      })();
+      transcribeWithGemini(audioBlob);
     }
-  }, [audioBlob]);
+  }, [audioBlob, useGemini, transcribeWithGemini]);
 
-  useEffect(() => { if (recError) toast.error(recError); }, [recError]);
+  useEffect(() => {
+    if (recError) toast.error(recError);
+  }, [recError]);
 
   const isActive = isListening || isRecording;
 
-  const handleStart = () => { useGemini ? startRecording() : startListening(); };
-  const handleStop = () => { useGemini ? stopRecording() : stopListening(); };
+  const handleStart = () => {
+    if (useGemini) {
+      startRecording();
+    } else {
+      startListening();
+    }
+  };
+
+  const handleStop = () => {
+    if (useGemini) {
+      stopRecording();
+    } else {
+      stopListening();
+    }
+  };
+
+  const handleImprove = async (actionId: string) => {
+    if (!text.trim()) {
+      toast.error("Please dictate or type text first");
+      return;
+    }
+    setIsProcessing(true);
+    setActiveAIAction(actionId);
+    try {
+      const res = await fetch("/api/improve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text,
+          action: actionId,
+          mode: writingMode,
+          customInstructions: settings?.customInstructions || "",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "AI processing failed");
+        return;
+      }
+      setText(data.text);
+      toast.success("Text improved successfully");
+    } catch {
+      toast.error("Failed to connect to AI service");
+    } finally {
+      setIsProcessing(false);
+      setActiveAIAction(null);
+    }
+  };
 
   const handleSave = () => {
     if (!text.trim()) return;
-    addHistoryEntry({ id: generateId(), text, timestamp: Date.now(), language, mode: writingMode, source: useGemini ? "gemini" : "speech" });
+    addHistoryEntry({
+      id: generateId(),
+      text,
+      timestamp: Date.now(),
+      language,
+      mode: writingMode,
+      source: useGemini ? "gemini" : "speech",
+    });
     toast.success("Saved to history");
   };
 
@@ -107,7 +177,7 @@ export default function WorkspacePage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Voice Typing Workspace</h1>
-          <p className="text-slate-500 text-sm mt-1 font-medium">Distraction-free dictation studio with waveform monitoring</p>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Distraction-free dictation studio with audio waveform and instant AI refinement</p>
         </div>
       </div>
 
@@ -115,7 +185,12 @@ export default function WorkspacePage() {
       <div className="flex items-center gap-3 flex-wrap p-3.5 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
         <Select value={language} onValueChange={setLanguage} options={LANGUAGES} className="w-44" />
         <Select value={writingMode} onValueChange={(v) => setWritingMode(v as WritingMode)} options={WRITING_MODES} className="w-48" />
-        <Button variant={useGemini ? "default" : "outline"} size="sm" onClick={() => setUseGemini(!useGemini)} className="font-semibold gap-1.5 ml-auto">
+        <Button
+          variant={useGemini ? "default" : "outline"}
+          size="sm"
+          onClick={() => setUseGemini(!useGemini)}
+          className="font-semibold gap-1.5 ml-auto cursor-pointer"
+        >
           <Sparkles className="w-4 h-4" />
           {useGemini ? "Gemini Engine" : "Browser Engine"}
         </Button>
@@ -130,16 +205,23 @@ export default function WorkspacePage() {
               {isActive ? (
                 <Badge variant="success" className="animate-pulse shadow-xs">
                   <span className="w-2 h-2 rounded-full bg-emerald-600 mr-1.5 animate-ping" />
-                  {isListening ? "Listening live..." : isPaused ? "Paused" : "Recording audio..."}
+                  {isListening ? "Listening live..." : isPaused ? "Recording Paused" : "Recording audio..."}
                 </Badge>
               ) : (
                 <Badge variant="secondary" className="text-slate-600 font-medium">
-                  Ready to Dictate
+                  Studio Ready
                 </Badge>
               )}
-              {isRecording && <span className="text-sm font-mono font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">{formatDuration(duration)}</span>}
+              {isRecording && (
+                <span className="text-sm font-mono font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">
+                  {formatDuration(duration)}
+                </span>
+              )}
               {isProcessing && (
-                <Badge variant="warning"><Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />Gemini Transcribing...</Badge>
+                <Badge variant="warning">
+                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                  {activeAIAction ? "AI Improving..." : "Gemini Transcribing..."}
+                </Badge>
               )}
             </div>
 
@@ -199,14 +281,16 @@ export default function WorkspacePage() {
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Your spoken words will appear here instantly..."
-            className="min-h-[260px] text-base leading-relaxed bg-slate-50/50"
+            placeholder="Your spoken words will appear here instantly. You can edit directly or apply AI improvements below..."
+            className="min-h-[240px] text-base leading-relaxed bg-slate-50/50"
           />
+
+          {/* Action Toolbar */}
           <div className="flex items-center gap-2.5 mt-4 flex-wrap">
             <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(text); toast.success("Copied to clipboard"); }} disabled={!text.trim()}>
               <Copy className="w-4 h-4 mr-1.5 text-slate-500" /> Copy
             </Button>
-            <Button variant="outline" size="sm" onClick={() => { downloadTextFile(text, `typify-${Date.now()}.txt`); toast.success("Exported text file"); }} disabled={!text.trim()}>
+            <Button variant="outline" size="sm" onClick={() => { downloadTextFile(text, `typify-workspace-${Date.now()}.txt`); toast.success("Exported text file"); }} disabled={!text.trim()}>
               <Download className="w-4 h-4 mr-1.5 text-slate-500" /> Export (.txt)
             </Button>
             <Button variant="outline" size="sm" onClick={handleSave} disabled={!text.trim()}>
@@ -218,6 +302,40 @@ export default function WorkspacePage() {
             <Button variant="ghost" size="sm" onClick={() => { setText(""); toast.info("Text cleared"); }} className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 ml-auto" disabled={!text.trim()}>
               <Trash2 className="w-4 h-4 mr-1.5" /> Clear
             </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* AI Quick Improvement Studio in Workspace */}
+      <Card className="border-slate-200/80 shadow-sm bg-white">
+        <CardHeader className="pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center">
+              <Wand2 className="w-4 h-4" />
+            </div>
+            <div>
+              <CardTitle className="text-base text-slate-900">AI Refinement Studio</CardTitle>
+              <CardDescription className="text-xs">Transform or polish your dictated content using Gemini 3.5 AI</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+            {AI_ACTIONS.map((action) => (
+              <Button
+                key={action.id}
+                variant="secondary"
+                size="sm"
+                onClick={() => handleImprove(action.id)}
+                disabled={isProcessing || !text.trim()}
+                className="text-xs font-semibold justify-start h-9 text-slate-700 hover:text-violet-700 hover:bg-violet-50 hover:border-violet-200 transition-all truncate"
+              >
+                {isProcessing && activeAIAction === action.id ? (
+                  <Loader2 className="w-3 h-3 mr-1.5 animate-spin text-violet-600" />
+                ) : null}
+                {action.label}
+              </Button>
+            ))}
           </div>
         </CardContent>
       </Card>
