@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -18,8 +18,11 @@ import {
   Mail,
   MessageCircle,
   BookOpen,
+  Smartphone,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DownloadApkModal } from "@/components/download-apk-modal";
 
 const FEATURES = [
   {
@@ -75,6 +78,7 @@ const MODES = [
 ];
 
 export default function LandingPage() {
+  const [apkModalOpen, setApkModalOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
@@ -152,6 +156,15 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setApkModalOpen(true)}
+                className="font-semibold gap-1.5 border-violet-200 text-violet-700 hover:bg-violet-50 cursor-pointer"
+              >
+                <Smartphone className="w-4 h-4" />
+                <span className="hidden sm:inline">Download</span> APK
+              </Button>
               <Link href="/about">
                 <Button variant="ghost" size="sm" className="font-medium">About</Button>
               </Link>
@@ -201,10 +214,19 @@ export default function LandingPage() {
                   Start Voice Typing Free
                 </Button>
               </Link>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setApkModalOpen(true)}
+                className="px-6 font-semibold gap-2 border-violet-300 text-violet-700 hover:bg-violet-50 shadow-xs apple-button cursor-pointer"
+              >
+                <Download className="w-5 h-5 text-violet-600" />
+                Download Mobile APK
+              </Button>
               <Link href="/ai-writer">
-                <Button variant="outline" size="lg" className="px-8 font-semibold gap-2 border-slate-300 apple-button">
+                <Button variant="ghost" size="lg" className="px-6 font-semibold gap-2 text-slate-600 hover:text-slate-900 apple-button">
                   <Sparkles className="w-5 h-5 text-violet-600" />
-                  Try AI Writing Assistant
+                  Try AI Assistant
                 </Button>
               </Link>
             </div>
@@ -358,6 +380,9 @@ export default function LandingPage() {
           </p>
         </div>
       </footer>
+
+      {/* APK & Mobile Download Modal */}
+      <DownloadApkModal isOpen={apkModalOpen} onClose={() => setApkModalOpen(false)} />
     </div>
   );
 }
