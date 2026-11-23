@@ -201,7 +201,7 @@ export default function WorkspacePage() {
         <CardContent className="p-6 sm:p-10">
           <div className="flex flex-col items-center gap-6">
             {/* Status bar */}
-            <div className="flex items-center gap-3 min-h-[30px]">
+            <div className="flex items-center gap-3 min-h-7.5">
               {isActive ? (
                 <Badge variant="success" className="animate-pulse shadow-xs">
                   <span className="w-2 h-2 rounded-full bg-emerald-600 mr-1.5 animate-ping" />
@@ -282,7 +282,7 @@ export default function WorkspacePage() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Your spoken words will appear here instantly. You can edit directly or apply AI improvements below..."
-            className="min-h-[240px] text-base leading-relaxed bg-slate-50/50"
+            className="min-h-60 text-base leading-relaxed bg-slate-50/50"
           />
 
           {/* Action Toolbar */}

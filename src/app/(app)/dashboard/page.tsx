@@ -231,7 +231,7 @@ export default function DashboardPage() {
             <CardContent className="p-6 sm:p-8">
               <div className="flex flex-col items-center gap-6">
                 {/* Status Indicator */}
-                <div className="flex items-center gap-3 min-h-[30px]">
+                <div className="flex items-center gap-3 min-h-7.5">
                   {isActive ? (
                     <Badge variant="success" className="animate-pulse shadow-xs">
                       <span className="w-2 h-2 rounded-full bg-emerald-600 mr-1.5 animate-ping" />
@@ -350,7 +350,7 @@ export default function DashboardPage() {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Transcribed voice text will appear here. You can also edit or type directly..."
-                className="min-h-[220px] text-base leading-relaxed bg-slate-50/50"
+                className="min-h-55 text-base leading-relaxed bg-slate-50/50"
               />
               <div className="flex items-center gap-2.5 mt-4 flex-wrap">
                 <Button variant="outline" size="sm" onClick={handleCopy} disabled={!text.trim()}>
