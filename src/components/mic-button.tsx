@@ -22,20 +22,39 @@ export function MicButton({
 }: MicButtonProps) {
   const isActive = isRecording || isListening;
 
+  const triggerHaptic = () => {
+    if (typeof window !== "undefined" && "vibrate" in navigator) {
+      try {
+        navigator.vibrate(isActive ? 60 : [40, 30, 40]);
+      } catch {
+        // Fallback for browsers that restrict vibration
+      }
+    }
+  };
+
+  const handleClick = () => {
+    triggerHaptic();
+    if (isActive) {
+      onStop();
+    } else {
+      onClick();
+    }
+  };
+
   const sizeClasses = {
     sm: "w-14 h-14",
     md: "w-20 h-20",
-    lg: "w-28 h-28",
+    lg: "w-24 h-24 sm:w-28 sm:h-28",
   };
 
   const iconSizes = {
     sm: "w-6 h-6",
     md: "w-8 h-8",
-    lg: "w-11 h-11",
+    lg: "w-10 h-10 sm:w-11 sm:h-11",
   };
 
   return (
-    <div className="relative inline-flex items-center justify-center p-3">
+    <div className="relative inline-flex items-center justify-center p-2 sm:p-3 touch-manipulation">
       {/* Outer pulsing rings when active */}
       {isActive && (
         <>
@@ -45,14 +64,14 @@ export function MicButton({
         </>
       )}
 
-      {/* Main button */}
+      {/* Native-feeling touch button */}
       <button
         type="button"
-        onClick={isActive ? onStop : onClick}
+        onClick={handleClick}
         disabled={disabled}
         aria-label={isActive ? "Stop recording" : "Start voice typing"}
         className={cn(
-          "relative rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-4 cursor-pointer active:scale-95 select-none",
+          "relative rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 cursor-pointer active:scale-90 select-none",
           sizeClasses[size],
           isActive
             ? "bg-gradient-to-tr from-rose-600 to-red-500 shadow-xl shadow-rose-500/35 hover:from-rose-700 hover:to-red-600 focus:ring-rose-400/40 scale-105"

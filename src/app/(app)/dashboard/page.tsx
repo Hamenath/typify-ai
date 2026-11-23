@@ -28,6 +28,7 @@ import { useAudioRecorder } from "@/hooks/use-audio-recorder";
 import { LANGUAGES, WRITING_MODES, AI_ACTIONS, type WritingMode } from "@/lib/types";
 import { addHistoryEntry, getHistory, getSettings } from "@/lib/storage";
 import { wordCount, charCount, formatDuration, generateId, downloadTextFile } from "@/lib/utils";
+import { InstallAppBanner } from "@/components/install-app-banner";
 
 export default function DashboardPage() {
   const [text, setText] = useState("");
@@ -207,6 +208,7 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <InstallAppBanner />
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

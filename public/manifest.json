@@ -1,0 +1,17 @@
+{
+  "name": "TYPIFY AI — Voice Typist Agent",
+  "short_name": "TYPIFY AI",
+  "description": "Speak Naturally. Type Intelligently. AI-powered voice typing & dictation agent.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48 72x72 96x96 128x128 256x256",
+      "type": "image/x-icon"
+    }
+  ]
+}
