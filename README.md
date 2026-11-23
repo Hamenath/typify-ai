@@ -10,15 +10,15 @@ An AI-powered voice typing, real-time audio transcription, and writing assistant
 
 ---
 
-[![Vercel Deployment](https://img.shields.io/badge/Deployed_on-Vercel-black?style=for-the-badge&logo=vercel)](https://typify-ai.vercel.app/)
+[![Vercel Deployment](https://img.shields.io/badge/Deployed_on-Vercel-black?style=for-the-badge&logo=vercel)](https://typify-ai-7.vercel.app/)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.4-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![Google Gemini 3.5](https://img.shields.io/badge/Google_Gemini-3.5_Flash-8b5cf6?style=for-the-badge&logo=google)](https://ai.google.dev/)
 [![TypeScript 5](https://img.shields.io/badge/TypeScript-5.0-3178c6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS 4](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
-[![PWA Ready](https://img.shields.io/badge/PWA-Installable-emerald?style=for-the-badge&logo=pwa)](https://typify-ai.vercel.app/)
+[![PWA Ready](https://img.shields.io/badge/PWA-Installable-emerald?style=for-the-badge&logo=pwa)](https://typify-ai-7.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-amber?style=for-the-badge)](LICENSE)
 
-[🌐 Live Application](https://typify-ai.vercel.app/) • [📱 Mobile App / APK](#-mobile-app--pwa-installation) • [✨ Key Features](#-key-features) • [🚀 Quickstart](#-getting-started) • [🔒 Security](#-security--privacy-architecture) • [📦 Deployment](#-vercel-production-deployment)
+[🌐 Live Application](https://typify-ai-7.vercel.app/) • [📱 Mobile App / APK](#-mobile-app--pwa-installation) • [✨ Key Features](#-key-features) • [🚀 Quickstart](#-getting-started) • [🔒 Security](#-security--privacy-architecture) • [📦 Deployment](#-vercel-production-deployment)
 
 </div>
 
