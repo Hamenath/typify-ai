@@ -1,64 +1,126 @@
 # TYPIFY AI
 
+<div align="center">
+
 **Speak Naturally. Type Intelligently.**
 
-A premium AI-powered voice typing web application built with Next.js, TypeScript, Tailwind CSS, and Google Gemini AI.
+An AI-powered voice typing and writing assistant SaaS web application. Built with Next.js 16, TypeScript, Tailwind CSS, and Google Gemini AI.
 
-![TYPIFY AI](https://img.shields.io/badge/TYPIFY-AI-violet?style=for-the-badge)
-![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-cyan?style=flat-square&logo=tailwindcss)
+[![Next.js](https://img.shields.io/badge/Next.js-16.4-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-3.5_AI-8b5cf6?style=for-the-badge&logo=google)](https://ai.google.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-emerald?style=for-the-badge)](LICENSE)
 
----
+[Live Demo](#-deployment--hosting) • [Features](#-key-features) • [Quickstart](#-getting-started) • [Architecture](#-technical-architecture) • [Vercel Deployment](#-deploy-to-vercel)
 
-## ✨ Features
-
-### Voice Typing
-- **Browser Speech Recognition** — Real-time voice-to-text using the Web Speech API
-- **Gemini AI Transcription** — Alternative transcription engine using Google Gemini for audio files
-- **Audio Recording** — Record audio with the MediaRecorder API with waveform visualization
-- **Language Support** — English (US/UK) and Tamil
-
-### AI Writing Assistant
-- **Grammar Correction** — Fix spelling, grammar and punctuation
-- **Professional Rewriting** — Transform text into formal business language
-- **Summarization** — Condense long text into key points
-- **Text Expansion** — Elaborate on short text with more detail
-- **Translation** — Translate between English and Tamil
-- **Email Mode** — Convert text into professional email format
-- **Message Mode** — Convert text into casual WhatsApp/chat style
-- **Rewrite** — Improve clarity without changing meaning
-
-### Writing Modes
-1. General
-2. Professional
-3. Casual
-4. Academic
-5. Email
-6. Social Media
-7. Developer Documentation
-
-### Productivity
-- Full text editor with word/character count
-- Copy, export, clear and download
-- Transcription history with search
-- Custom AI instructions
-- Responsive design (desktop, tablet, mobile)
+</div>
 
 ---
 
-## 🚀 Getting Started
+## 🌟 Overview
+
+**TYPIFY AI** transforms voice dictation into clear text. It is designed for students, software engineers, content creators, and professionals who want to speak freely while producing structured documents, professional emails, code documentation, or casual chats.
+
+### 🎙️ Dual Engine Approach
+1. **In-Browser Web Speech Engine**: Zero-latency speech recognition directly in your browser with real-time interim results.
+2. **Google Gemini Audio Engine**: Server-side multimodal transcription powered by Google Gemini, capable of handling complex audio recordings, diverse accents, and bilingual speech (English & Tamil).
+
+---
+
+## 🚀 Key Features
+
+### 1. Voice Dictation Studio
+- **Interactive Multi-Ring Microphone Button**: Clear visual feedback with pulse animations during active recording.
+- **Real-Time Audio Waveform**: HTML5 Canvas audio spectrum analyzer connected to the browser's `AudioContext` and `AnalyserNode`.
+- **Interim Speech Highlighting**: Live stream of partial speech dictation prior to finalization.
+- **Recording Controls**: Start, pause, resume, stop, and reset recording workflows.
+
+### 2. AI Writing Intelligence (10 Transformations)
+- **Grammar & Punctuation**: Corrects spelling, grammar, and sentence structure without altering tone.
+- **Make Professional**: Rewrites rough transcripts into formal business communication.
+- **Summarize**: Distills complex paragraphs into concise core takeaways.
+- **Expand Content**: Deepens ideas with elaboration and examples without inventing facts.
+- **Email Converter**: Automatically structures transcripts into formal emails complete with subject line, greeting, and sign-off.
+- **Message Converter**: Re-formats voice notes into casual WhatsApp and Slack messages with natural phrasing.
+- **Bilingual Translation**: High-accuracy translation between English and Tamil.
+- **Paraphrase & Rewrite**: Enhances readability and flow while preserving intent.
+- **Make Shorter / Make Longer**: Quick text length adjustments.
+
+### 3. 7 Specialized Writing Modes
+- `General` • `Professional` • `Casual` • `Academic` • `Email` • `Social Media` • `Developer Documentation`
+
+### 4. Productivity & Workflow
+- **Full Text Editor**: In-place editing with live word and character counters.
+- **One-Click Export**: Instant `.txt` file generation and download via Blob streams.
+- **Clipboard Sync**: Quick copy with toast notifications.
+- **Searchable History**: Saved transcriptions in LocalStorage with instant keyword search, export all, and individual deletions.
+- **Custom AI Directives**: Personalize Gemini's output persona and style from Settings.
+
+---
+
+## 🧱 Technical Architecture
+
+```
+typify-ai/
+├── src/
+│   ├── app/
+│   │   ├── (app)/                    # SaaS app layout & protected shell
+│   │   │   ├── dashboard/page.tsx    # Primary voice studio & quick AI actions
+│   │   │   ├── workspace/page.tsx    # Distraction-free voice typing studio
+│   │   │   ├── ai-writer/page.tsx    # 10-tool AI transformation workspace
+│   │   │   ├── history/page.tsx      # Searchable transcript history
+│   │   │   ├── settings/page.tsx     # Custom directives & default preferences
+│   │   │   ├── about/page.tsx        # Overview & specifications
+│   │   │   └── layout.tsx            # Responsive sidebar & mobile drawer layout
+│   │   ├── api/
+│   │   │   ├── transcribe/route.ts   # Secure Gemini audio transcription endpoint
+│   │   │   └── improve/route.ts      # Secure Gemini text rewriting endpoint
+│   │   ├── globals.css               # Clean SaaS light design system
+│   │   ├── layout.tsx                # Root layout with Inter font & Sonner toasts
+│   │   ├── page.tsx                  # Marketing landing page
+│   │   └── not-found.tsx             # 404 handler
+│   ├── components/
+│   │   ├── ui/                       # Accessible UI primitives (Button, Card, Textarea, Select, Badge, Toast)
+│   │   ├── audio-waveform.tsx        # HTML5 Canvas Web Audio API visualizer
+│   │   ├── mic-button.tsx            # Animated recording button
+│   │   └── sidebar.tsx               # Navigation sidebar
+│   ├── hooks/
+│   │   ├── use-speech-recognition.ts # Web Speech API integration
+│   │   └── use-audio-recorder.ts     # MediaRecorder audio capture hook
+│   └── lib/
+│       ├── types.ts                  # TypeScript schemas & constants
+│       ├── utils.ts                  # Formatting, counters, and file export helpers
+│       └── storage.ts                # Type-safe LocalStorage manager
+├── .env.example                      # Template for environment configuration
+├── vercel.json                       # Vercel deployment configuration
+├── next.config.ts                    # Next.js 16 configuration
+└── package.json                      # Dependencies & scripts
+```
+
+---
+
+## 🔒 Security & Privacy Guarantees
+
+- **Server-Side API Key Isolation**: Your `GEMINI_API_KEY` is referenced **strictly** on the server inside API routes. It is never exposed in client bundles or client requests.
+- **Input Validation & DOS Protection**: Text payloads are capped at 50,000 characters; audio uploads are verified against an audio MIME whitelist with a 25MB file size limit.
+- **Confidentiality**: Audio is processed in-memory and is not retained or logged on external servers.
+- **Client Storage**: User transcriptions and directives remain in your local browser (`localStorage`).
+
+---
+
+## ⚡ Getting Started
 
 ### Prerequisites
-- **Node.js** 18.0 or later
-- **npm** 9.0 or later
-- **Google Gemini API key** ([Get one here](https://aistudio.google.com/apikey))
+- **Node.js**: `v18.17.0` or later
+- **npm**: `v9.0.0` or later
+- **Google Gemini API Key**: [Get a free API key from Google AI Studio](https://aistudio.google.com/apikey)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/typify-ai.git
+   git clone https://github.com/Hamenath/typify-ai.git
    cd typify-ai
    ```
 
@@ -67,171 +129,102 @@ A premium AI-powered voice typing web application built with Next.js, TypeScript
    npm install
    ```
 
-3. **Configure environment variables**
-
-   Create a `.env.local` file in the project root:
+3. **Configure Environment Variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+   Open `.env.local` and insert your Gemini API key:
    ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
+   GEMINI_API_KEY=your_actual_gemini_api_key_here
    ```
 
-   > ⚠️ **Important:** Never commit your API key. The `.env.local` file is gitignored by default.
-
-4. **Start the development server**
+4. **Run the local development server**
    ```bash
    npm run dev
    ```
+   Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-5. **Open the application**
-
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
----
-
-## 📁 Project Structure
-
-```
-typify-ai/
-├── src/
-│   ├── app/
-│   │   ├── (app)/                  # App routes with sidebar layout
-│   │   │   ├── dashboard/page.tsx  # Main dashboard
-│   │   │   ├── workspace/page.tsx  # Voice typing workspace
-│   │   │   ├── ai-writer/page.tsx  # AI writing assistant
-│   │   │   ├── history/page.tsx    # Transcription history
-│   │   │   ├── settings/page.tsx   # App settings
-│   │   │   ├── about/page.tsx      # About page
-│   │   │   └── layout.tsx          # App shell with sidebar
-│   │   ├── api/
-│   │   │   ├── transcribe/route.ts # Gemini audio transcription
-│   │   │   └── improve/route.ts    # AI text improvement
-│   │   ├── globals.css             # Global styles
-│   │   ├── layout.tsx              # Root layout
-│   │   ├── page.tsx                # Landing page
-│   │   └── not-found.tsx           # 404 page
-│   ├── components/
-│   │   ├── ui/                     # Reusable UI components
-│   │   │   ├── button.tsx
-│   │   │   ├── card.tsx
-│   │   │   ├── textarea.tsx
-│   │   │   ├── select.tsx
-│   │   │   ├── badge.tsx
-│   │   │   └── toast.tsx
-│   │   ├── audio-waveform.tsx      # Audio waveform visualizer
-│   │   ├── mic-button.tsx          # Microphone button
-│   │   └── sidebar.tsx             # Navigation sidebar
-│   ├── hooks/
-│   │   ├── use-speech-recognition.ts  # Web Speech API hook
-│   │   └── use-audio-recorder.ts      # MediaRecorder hook
-│   └── lib/
-│       ├── types.ts                # Type definitions
-│       ├── utils.ts                # Utility functions
-│       └── storage.ts             # LocalStorage helpers
-├── .env.example                    # Environment variable template
-├── .env.local                      # Your API key (gitignored)
-├── next.config.ts                  # Next.js configuration
-├── tailwind.config.ts              # Tailwind configuration
-├── tsconfig.json                   # TypeScript configuration
-└── package.json                    # Dependencies
-```
+5. **Verify the production build**
+   ```bash
+   npm run build
+   npm start
+   ```
 
 ---
 
-## 🔧 Environment Variables
+## 🌐 Deploy to Vercel
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `GEMINI_API_KEY` | Google Gemini API key | Yes |
+Deploy TYPIFY AI to Vercel in a few steps:
 
-### Getting a Gemini API Key
+### Method 1: Using the Vercel Dashboard (Recommended)
 
-1. Visit [Google AI Studio](https://aistudio.google.com/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy the key and paste it in your `.env.local` file
+1. Push your repository to your GitHub account:
+   ```bash
+   git push -u origin main
+   ```
+2. Navigate to [vercel.com/new](https://vercel.com/new).
+3. Import the **`typify-ai`** repository.
+4. Under **Environment Variables**, add:
+   - **Key**: `GEMINI_API_KEY`
+   - **Value**: `Your Google Gemini API Key`
+5. Click **Deploy**. Vercel will build and launch your application.
 
----
-
-## 🌐 API Endpoints
-
-### POST `/api/transcribe`
-Transcribes audio using Gemini AI.
-
-**Request:** `multipart/form-data`
-- `audio` — Audio file (WebM format)
-- `language` — Language code (e.g., `en-US`, `ta-IN`)
-
-**Response:**
-```json
-{ "text": "Transcribed text here" }
-```
-
-### POST `/api/improve`
-Improves text using Gemini AI.
-
-**Request:** `application/json`
-```json
-{
-  "text": "Text to improve",
-  "action": "correct|professional|shorter|longer|email|whatsapp|summarize|translate-tamil|translate-english|rewrite",
-  "mode": "general|professional|casual|academic|email|social-media|developer-docs",
-  "customInstructions": "Optional custom instructions"
-}
-```
-
-**Response:**
-```json
-{ "text": "Improved text here" }
-```
-
----
-
-## 📦 Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Import the repository on [Vercel](https://vercel.com)
-3. Add `GEMINI_API_KEY` to environment variables
-4. Deploy
-
-### Other Platforms
+### Method 2: Using the Vercel CLI
 
 ```bash
-# Build for production
-npm run build
-
-# Start production server
-npm start
+npm install -g vercel
+vercel login
+vercel
+# When prompted, enter your GEMINI_API_KEY
+vercel --prod
 ```
-
-Ensure the `GEMINI_API_KEY` environment variable is set on your hosting platform.
 
 ---
 
-## 🤝 Contributing
+## 📡 API Reference
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### `POST /api/transcribe`
+Transcribes audio recordings with Gemini AI.
+
+- **Content-Type**: `multipart/form-data`
+- **Fields**:
+  - `audio`: Audio file blob (`audio/webm`, `audio/wav`, `audio/mp3`, max 25MB)
+  - `language`: Target language (`en-US` or `ta-IN`)
+- **Response**:
+  ```json
+  {
+    "text": "Transcribed speech content formatted with punctuation."
+  }
+  ```
+
+### `POST /api/improve`
+Transforms and edits text using Gemini AI models.
+
+- **Content-Type**: `application/json`
+- **Body**:
+  ```json
+  {
+    "text": "Raw text content",
+    "action": "correct | professional | shorter | longer | email | whatsapp | summarize | translate-tamil | translate-english | rewrite",
+    "mode": "general | professional | casual | academic | email | social-media | developer-docs",
+    "customInstructions": "Optional custom prompt directives"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "text": "Polished output from the AI model."
+  }
+  ```
 
 ---
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-## 🙏 Acknowledgments
-
-- [Next.js](https://nextjs.org/) — React framework
-- [Google Gemini AI](https://ai.google.dev/) — AI engine
-- [Tailwind CSS](https://tailwindcss.com/) — Styling
-- [Lucide Icons](https://lucide.dev/) — Icons
-- [Sonner](https://sonner.emilkowal.dev/) — Toast notifications
-
----
-
-**TYPIFY AI** — Speak Naturally. Type Intelligently. ✨
+<div align="center">
+  <sub>Built with care using Next.js and Google Gemini AI.</sub>
+</div>
