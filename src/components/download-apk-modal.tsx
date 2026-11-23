@@ -51,7 +51,7 @@ export function DownloadApkModal({ isOpen, onClose }: { isOpen: boolean; onClose
         </button>
 
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-linear-to-tr from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 mb-4">
             <Smartphone className="w-7 h-7" />
           </div>
 
@@ -64,7 +64,7 @@ export function DownloadApkModal({ isOpen, onClose }: { isOpen: boolean; onClose
 
           <div className="my-5 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-left space-y-3">
             <div className="flex items-start gap-2.5">
-              <div className="w-5 h-5 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+              <div className="w-5 h-5 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                 1
               </div>
               <p className="text-xs text-slate-600 font-medium">
@@ -72,7 +72,7 @@ export function DownloadApkModal({ isOpen, onClose }: { isOpen: boolean; onClose
               </p>
             </div>
             <div className="flex items-start gap-2.5">
-              <div className="w-5 h-5 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+              <div className="w-5 h-5 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                 2
               </div>
               <p className="text-xs text-slate-600 font-medium">
