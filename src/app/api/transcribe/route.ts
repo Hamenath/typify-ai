@@ -54,8 +54,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (!text || text.trim().length === 0) {
+      const errMsg = lastError instanceof Error ? `: ${lastError.message}` : "";
       return NextResponse.json(
-        { error: "Could not transcribe the audio. The recording may be too short or unclear." },
+        { error: `Could not transcribe audio${errMsg}. Please try again.` },
         { status: 422 }
       );
     }

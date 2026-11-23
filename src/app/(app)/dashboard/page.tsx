@@ -53,7 +53,10 @@ export default function DashboardPage() {
   const handleSpeechResult = useCallback(
     (transcript: string, isFinal: boolean) => {
       if (isFinal) {
-        setText((prev) => (prev ? prev + " " + transcript : transcript));
+        setText((prev) => {
+          const newText = prev ? prev + " " + transcript : transcript;
+          return newText;
+        });
       }
     },
     []

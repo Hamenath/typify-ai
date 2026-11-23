@@ -201,10 +201,10 @@ export default function WorkspacePage() {
             <Button variant="outline" size="sm" onClick={handleSave} disabled={!text.trim()}>
               Save
             </Button>
-            <Button variant="outline" size="sm" onClick={() => { resetTranscript(); setText(""); }} disabled={!text.trim()}>
+            <Button variant="outline" size="sm" onClick={() => { resetTranscript(); setText(""); toast.info("Reset transcription"); }} disabled={!text.trim() && !interimTranscript}>
               <RotateCcw className="w-4 h-4 mr-1" /> Reset
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setText("")} className="text-red-400 hover:text-red-300" disabled={!text.trim()}>
+            <Button variant="ghost" size="sm" onClick={() => { setText(""); toast.info("Text cleared"); }} className="text-red-400 hover:text-red-300" disabled={!text.trim()}>
               <Trash2 className="w-4 h-4 mr-1" /> Clear
             </Button>
           </div>

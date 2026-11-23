@@ -88,8 +88,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (!improvedText || improvedText.trim().length === 0) {
+      const errMsg = lastError instanceof Error ? `: ${lastError.message}` : "";
       return NextResponse.json(
-        { error: "AI did not return any result. Please try again." },
+        { error: `AI processing failed${errMsg}. Please try again.` },
         { status: 422 }
       );
     }
