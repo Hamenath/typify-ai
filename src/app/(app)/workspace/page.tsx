@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import {
-  Mic,
   Copy,
   Download,
   Trash2,
@@ -13,6 +12,7 @@ import {
   Loader2,
   Square,
   RotateCcw,
+  BookmarkCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -103,45 +103,52 @@ export default function WorkspacePage() {
   };
 
   return (
-    <div className="p-4 lg:p-6 max-w-5xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Voice Typing Workspace</h1>
-        <p className="text-gray-400 text-sm mt-1">Speak and let AI transcribe your words</p>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Voice Typing Workspace</h1>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Distraction-free dictation studio with waveform monitoring</p>
+        </div>
       </div>
 
       {/* Controls Bar */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <Select value={language} onValueChange={setLanguage} options={LANGUAGES} className="w-40" />
-        <Select value={writingMode} onValueChange={(v) => setWritingMode(v as WritingMode)} options={WRITING_MODES} className="w-44" />
-        <Button variant={useGemini ? "default" : "outline"} size="sm" onClick={() => setUseGemini(!useGemini)}>
-          <Sparkles className="w-4 h-4 mr-1" />
-          {useGemini ? "Gemini" : "Browser"}
+      <div className="flex items-center gap-3 flex-wrap p-3.5 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
+        <Select value={language} onValueChange={setLanguage} options={LANGUAGES} className="w-44" />
+        <Select value={writingMode} onValueChange={(v) => setWritingMode(v as WritingMode)} options={WRITING_MODES} className="w-48" />
+        <Button variant={useGemini ? "default" : "outline"} size="sm" onClick={() => setUseGemini(!useGemini)} className="font-semibold gap-1.5 ml-auto">
+          <Sparkles className="w-4 h-4" />
+          {useGemini ? "Gemini Engine" : "Browser Engine"}
         </Button>
       </div>
 
-      {/* Recording Area */}
-      <Card className="overflow-hidden">
-        <CardContent className="p-8">
+      {/* Central Dictation Studio */}
+      <Card className="border-slate-200/80 shadow-sm bg-white overflow-hidden">
+        <CardContent className="p-6 sm:p-10">
           <div className="flex flex-col items-center gap-6">
             {/* Status bar */}
-            <div className="flex items-center gap-3 min-h-[28px]">
-              {isActive && (
-                <Badge variant="success" className="animate-pulse">
-                  {isListening ? "Listening..." : isPaused ? "Paused" : "Recording..."}
+            <div className="flex items-center gap-3 min-h-[30px]">
+              {isActive ? (
+                <Badge variant="success" className="animate-pulse shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 mr-1.5 animate-ping" />
+                  {isListening ? "Listening live..." : isPaused ? "Paused" : "Recording audio..."}
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="text-slate-600 font-medium">
+                  Ready to Dictate
                 </Badge>
               )}
-              {isRecording && <span className="text-sm font-mono text-gray-400">{formatDuration(duration)}</span>}
+              {isRecording && <span className="text-sm font-mono font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">{formatDuration(duration)}</span>}
               {isProcessing && (
-                <Badge variant="warning"><Loader2 className="w-3 h-3 mr-1 animate-spin" />Processing...</Badge>
+                <Badge variant="warning"><Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />Gemini Transcribing...</Badge>
               )}
             </div>
 
-            {/* Waveform */}
+            {/* Waveform Canvas */}
             <div className="w-full max-w-2xl">
               <AudioWaveform analyserNode={analyserNode} isActive={isActive} />
             </div>
 
-            {/* Mic */}
+            {/* Mic Button */}
             <MicButton
               isRecording={isRecording}
               isListening={isListening}
@@ -150,62 +157,66 @@ export default function WorkspacePage() {
               disabled={isProcessing || (!isSupported && !useGemini)}
             />
 
-            {/* Extra controls */}
-            <div className="flex items-center gap-2">
+            {/* Play/Pause/Stop toolbar */}
+            <div className="flex items-center gap-2.5">
               {isRecording && useGemini && (
                 <Button variant="outline" size="sm" onClick={isPaused ? resumeRecording : pauseRecording}>
-                  {isPaused ? <Play className="w-4 h-4 mr-1" /> : <Pause className="w-4 h-4 mr-1" />}
+                  {isPaused ? <Play className="w-4 h-4 mr-1.5 text-emerald-600" /> : <Pause className="w-4 h-4 mr-1.5 text-amber-600" />}
                   {isPaused ? "Resume" : "Pause"}
                 </Button>
               )}
               {isActive && (
-                <Button variant="outline" size="sm" onClick={handleStop}>
-                  <Square className="w-4 h-4 mr-1" /> Stop
+                <Button variant="outline" size="sm" onClick={handleStop} className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 border-rose-200">
+                  <Square className="w-4 h-4 mr-1.5 fill-rose-600" /> Stop Recording
                 </Button>
               )}
             </div>
 
             {interimTranscript && (
-              <p className="text-sm text-gray-400 italic text-center max-w-lg">{interimTranscript}</p>
+              <div className="w-full max-w-xl p-3.5 rounded-xl bg-violet-50/70 border border-violet-100 text-center animate-fade-in">
+                <p className="text-sm text-violet-900 font-medium italic">"{interimTranscript}"</p>
+              </div>
             )}
 
             {!isSupported && !useGemini && (
-              <p className="text-sm text-yellow-400 text-center">
-                Browser speech recognition not supported. Switch to Gemini mode.
+              <p className="text-xs text-amber-700 bg-amber-50 px-3.5 py-2 rounded-lg border border-amber-200 text-center">
+                Browser speech recognition is not supported in this browser. Switch to <strong>Gemini Engine</strong>.
               </p>
             )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Editor */}
-      <Card>
+      {/* Editor Card */}
+      <Card className="border-slate-200/80 shadow-sm bg-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-gray-300">Output</span>
-            <span className="text-xs text-gray-500">{wordCount(text)} words • {charCount(text)} chars</span>
+            <span className="text-sm font-bold text-slate-800">Transcribed Content</span>
+            <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200/70">
+              {wordCount(text)} words • {charCount(text)} chars
+            </span>
           </div>
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Transcribed text will appear here..."
-            className="min-h-[250px] text-base leading-relaxed"
+            placeholder="Your spoken words will appear here instantly..."
+            className="min-h-[260px] text-base leading-relaxed bg-slate-50/50"
           />
-          <div className="flex items-center gap-2 mt-4 flex-wrap">
-            <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(text); toast.success("Copied"); }} disabled={!text.trim()}>
-              <Copy className="w-4 h-4 mr-1" /> Copy
+          <div className="flex items-center gap-2.5 mt-4 flex-wrap">
+            <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(text); toast.success("Copied to clipboard"); }} disabled={!text.trim()}>
+              <Copy className="w-4 h-4 mr-1.5 text-slate-500" /> Copy
             </Button>
-            <Button variant="outline" size="sm" onClick={() => { downloadTextFile(text, `typify-${Date.now()}.txt`); toast.success("Downloaded"); }} disabled={!text.trim()}>
-              <Download className="w-4 h-4 mr-1" /> Export
+            <Button variant="outline" size="sm" onClick={() => { downloadTextFile(text, `typify-${Date.now()}.txt`); toast.success("Exported text file"); }} disabled={!text.trim()}>
+              <Download className="w-4 h-4 mr-1.5 text-slate-500" /> Export (.txt)
             </Button>
             <Button variant="outline" size="sm" onClick={handleSave} disabled={!text.trim()}>
-              Save
+              <BookmarkCheck className="w-4 h-4 mr-1.5 text-violet-600" /> Save to History
             </Button>
             <Button variant="outline" size="sm" onClick={() => { resetTranscript(); setText(""); toast.info("Reset transcription"); }} disabled={!text.trim() && !interimTranscript}>
-              <RotateCcw className="w-4 h-4 mr-1" /> Reset
+              <RotateCcw className="w-4 h-4 mr-1.5 text-slate-500" /> Reset
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => { setText(""); toast.info("Text cleared"); }} className="text-red-400 hover:text-red-300" disabled={!text.trim()}>
-              <Trash2 className="w-4 h-4 mr-1" /> Clear
+            <Button variant="ghost" size="sm" onClick={() => { setText(""); toast.info("Text cleared"); }} className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 ml-auto" disabled={!text.trim()}>
+              <Trash2 className="w-4 h-4 mr-1.5" /> Clear
             </Button>
           </div>
         </CardContent>

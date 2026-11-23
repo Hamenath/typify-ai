@@ -25,7 +25,7 @@ export function Select({ value, onValueChange, options, placeholder, className, 
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
         disabled={disabled}
-        className="w-full h-10 rounded-lg border border-gray-700 bg-gray-800/50 px-3 pr-8 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer transition-colors"
+        className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 pr-8 text-sm font-medium text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer transition-all shadow-xs"
       >
         {placeholder && (
           <option value="" disabled>
@@ -33,12 +33,12 @@ export function Select({ value, onValueChange, options, placeholder, className, 
           </option>
         )}
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value} className="bg-gray-800">
+          <option key={opt.value} value={opt.value} className="bg-white text-slate-800 py-1">
             {opt.label}
           </option>
         ))}
       </select>
-      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
     </div>
   );
 }

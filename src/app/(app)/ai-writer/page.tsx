@@ -87,45 +87,55 @@ export default function AIWriterPage() {
   };
 
   return (
-    <div className="p-4 lg:p-6 max-w-7xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <Sparkles className="w-6 h-6 text-violet-400" />
-          AI Writing Assistant
-        </h1>
-        <p className="text-gray-400 text-sm mt-1">Transform your text with AI-powered writing tools</p>
-      </div>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            AI Writing Assistant
+          </h1>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Transform rough dictation and text with Gemini 3.5 AI writing engines</p>
+        </div>
 
-      {/* Mode selector */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <Select value={writingMode} onValueChange={(v) => setWritingMode(v as WritingMode)} options={WRITING_MODES} className="w-48" />
-        <Badge variant="secondary">{WRITING_MODES.find((m) => m.value === writingMode)?.label} Mode</Badge>
+        {/* Mode selector */}
+        <div className="flex items-center gap-2.5">
+          <Select value={writingMode} onValueChange={(v) => setWritingMode(v as WritingMode)} options={WRITING_MODES} className="w-48" />
+          <Badge variant="default" className="py-1 px-3">
+            {WRITING_MODES.find((m) => m.value === writingMode)?.label}
+          </Badge>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input */}
-        <Card>
-          <CardHeader className="pb-3">
+        <Card className="border-slate-200/80 shadow-sm bg-white">
+          <CardHeader className="pb-3 border-b border-slate-100">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Input Text</CardTitle>
-              <span className="text-xs text-gray-500">{wordCount(inputText)} words • {charCount(inputText)} chars</span>
+              <div>
+                <CardTitle className="text-base text-slate-900">Input Content</CardTitle>
+                <CardDescription className="text-xs">Paste text or transcribed audio to improve</CardDescription>
+              </div>
+              <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200/70">
+                {wordCount(inputText)} words • {charCount(inputText)} chars
+              </span>
             </div>
-            <CardDescription>Paste or type the text you want to transform</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             <Textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Enter your text here..."
-              className="min-h-[300px] text-base"
+              placeholder="Paste or type text you want to rewrite, translate or summarize..."
+              className="min-h-[300px] text-base leading-relaxed bg-slate-50/50"
             />
-            <div className="flex items-center gap-2 mt-3">
-              <Button variant="ghost" size="sm" onClick={() => setInputText("")} disabled={!inputText.trim()} className="text-red-400">
-                <Trash2 className="w-4 h-4 mr-1" /> Clear
+            <div className="flex items-center gap-2.5 mt-3.5">
+              <Button variant="ghost" size="sm" onClick={() => setInputText("")} disabled={!inputText.trim()} className="text-rose-600 hover:text-rose-700 hover:bg-rose-50">
+                <Trash2 className="w-4 h-4 mr-1.5" /> Clear Input
               </Button>
               {outputText && (
-                <Button variant="ghost" size="sm" onClick={() => setInputText(outputText)}>
-                  <ArrowRight className="w-4 h-4 mr-1" /> Use Output as Input
+                <Button variant="outline" size="sm" onClick={() => setInputText(outputText)} className="ml-auto font-semibold text-violet-700 border-violet-200 hover:bg-violet-50">
+                  <ArrowRight className="w-4 h-4 mr-1.5" /> Use Output as Next Input
                 </Button>
               )}
             </div>
@@ -133,60 +143,64 @@ export default function AIWriterPage() {
         </Card>
 
         {/* Output */}
-        <Card>
-          <CardHeader className="pb-3">
+        <Card className="border-slate-200/80 shadow-sm bg-white">
+          <CardHeader className="pb-3 border-b border-slate-100">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Output</CardTitle>
-              <span className="text-xs text-gray-500">{wordCount(outputText)} words • {charCount(outputText)} chars</span>
+              <div>
+                <CardTitle className="text-base text-slate-900">AI Result</CardTitle>
+                <CardDescription className="text-xs">
+                  {lastAction ? `Processed: ${AI_ACTIONS.find((a) => a.id === lastAction)?.label}` : "Transformed text will appear here"}
+                </CardDescription>
+              </div>
+              <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200/70">
+                {wordCount(outputText)} words • {charCount(outputText)} chars
+              </span>
             </div>
-            <CardDescription>
-              {lastAction ? `Last action: ${AI_ACTIONS.find((a) => a.id === lastAction)?.label}` : "AI-improved text will appear here"}
-            </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             <Textarea
               value={outputText}
               onChange={(e) => setOutputText(e.target.value)}
-              placeholder="Improved text will appear here..."
-              className="min-h-[300px] text-base"
+              placeholder="Your polished AI result will be generated here..."
+              className="min-h-[300px] text-base leading-relaxed bg-slate-50/50"
               readOnly={isProcessing}
             />
-            <div className="flex items-center gap-2 mt-3">
+            <div className="flex items-center gap-2.5 mt-3.5">
               <Button variant="outline" size="sm" onClick={() => handleCopy(outputText)} disabled={!outputText.trim()}>
-                <Copy className="w-4 h-4 mr-1" /> Copy
+                <Copy className="w-4 h-4 mr-1.5 text-slate-500" /> Copy Output
               </Button>
-              <Button variant="outline" size="sm" onClick={() => { downloadTextFile(outputText, `typify-ai-${Date.now()}.txt`); toast.success("Downloaded"); }} disabled={!outputText.trim()}>
-                <Download className="w-4 h-4 mr-1" /> Export
+              <Button variant="outline" size="sm" onClick={() => { downloadTextFile(outputText, `typify-ai-${Date.now()}.txt`); toast.success("Downloaded file"); }} disabled={!outputText.trim()}>
+                <Download className="w-4 h-4 mr-1.5 text-slate-500" /> Export (.txt)
               </Button>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Custom Instructions */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Custom Instructions (Optional)</CardTitle>
-          <CardDescription>Add specific instructions for the AI to follow</CardDescription>
+      {/* Custom AI Directives */}
+      <Card className="border-slate-200/80 shadow-sm bg-white">
+        <CardHeader className="pb-3 border-b border-slate-100">
+          <CardTitle className="text-base text-slate-900">Custom Directives (Optional)</CardTitle>
+          <CardDescription className="text-xs">Direct instructions injected into Gemini prompts</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <Textarea
             value={customInstructions}
             onChange={(e) => setCustomInstructions(e.target.value)}
-            placeholder="e.g., Use British English, keep the tone friendly, avoid jargon..."
-            className="min-h-[80px]"
+            placeholder="e.g., Use British English spelling, maintain bullet points, make it sound enthusiastic..."
+            className="min-h-[80px] bg-slate-50/50"
           />
         </CardContent>
       </Card>
 
-      {/* AI Actions Grid */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">AI Actions</CardTitle>
-          <CardDescription>Click an action to transform your input text</CardDescription>
+      {/* AI Actions 10-Grid */}
+      <Card className="border-slate-200/80 shadow-sm bg-white">
+        <CardHeader className="pb-3 border-b border-slate-100">
+          <CardTitle className="text-base text-slate-900">Select AI Transformation</CardTitle>
+          <CardDescription className="text-xs">Click any action to transform input text with Gemini</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <CardContent className="pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
             {AI_ACTIONS.map((action) => {
               const Icon = ICON_MAP[action.icon] || Sparkles;
               return (
@@ -194,18 +208,20 @@ export default function AIWriterPage() {
                   key={action.id}
                   onClick={() => handleAction(action.id)}
                   disabled={isProcessing || !inputText.trim()}
-                  className="flex flex-col items-start gap-2 p-4 rounded-xl border border-gray-800 bg-gray-900/30 hover:bg-gray-900/60 hover:border-violet-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-left group"
+                  className="flex flex-col items-start gap-2 p-4 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-violet-50 hover:border-violet-300 hover:shadow-xs transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed text-left group cursor-pointer"
                 >
-                  <div className="flex items-center gap-2 w-full">
-                    <Icon className="w-4 h-4 text-violet-400 flex-shrink-0" />
-                    <span className="text-sm font-medium text-gray-200 group-hover:text-white truncate">
+                  <div className="flex items-center gap-2.5 w-full">
+                    <div className="w-7 h-7 rounded-lg bg-white border border-slate-200/80 group-hover:border-violet-200 flex items-center justify-center text-violet-600 transition-colors shadow-2xs">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span className="text-sm font-bold text-slate-800 group-hover:text-violet-950 truncate">
                       {action.label}
                     </span>
                     {isProcessing && lastAction === action.id && (
-                      <Loader2 className="w-3 h-3 ml-auto animate-spin text-violet-400" />
+                      <Loader2 className="w-3.5 h-3.5 ml-auto animate-spin text-violet-600" />
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 leading-relaxed">{action.description}</p>
+                  <p className="text-xs text-slate-500 group-hover:text-slate-600 leading-relaxed">{action.description}</p>
                 </button>
               );
             })}

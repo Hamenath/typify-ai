@@ -19,7 +19,7 @@ export default function SettingsPage() {
 
   const handleSave = () => {
     saveSettings(settings);
-    toast.success("Settings saved");
+    toast.success("Settings saved successfully");
   };
 
   const handleReset = () => {
@@ -33,31 +33,33 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-4 lg:p-6 max-w-3xl mx-auto space-y-6">
-      <div className="flex items-start justify-between">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Settings className="w-6 h-6 text-violet-400" />
-            Settings
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center">
+              <Settings className="w-5 h-5" />
+            </div>
+            Preferences & Settings
           </h1>
-          <p className="text-gray-400 text-sm mt-1">Configure your TYPIFY AI preferences</p>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Configure default language, writing persona and Gemini directives</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleReset}>
-            <RotateCcw className="w-4 h-4 mr-1" /> Reset
+        <div className="flex gap-2.5">
+          <Button variant="outline" size="sm" onClick={handleReset} className="font-semibold">
+            <RotateCcw className="w-4 h-4 mr-1.5" /> Reset
           </Button>
-          <Button size="sm" onClick={handleSave}>
-            <Save className="w-4 h-4 mr-1" /> Save
+          <Button size="sm" onClick={handleSave} className="font-semibold shadow-xs">
+            <Save className="w-4 h-4 mr-1.5" /> Save Changes
           </Button>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Language</CardTitle>
-          <CardDescription>Default language for speech recognition</CardDescription>
+      <Card className="border-slate-200/80 shadow-sm bg-white">
+        <CardHeader className="border-b border-slate-100 pb-4">
+          <CardTitle className="text-base text-slate-900">Default Language</CardTitle>
+          <CardDescription className="text-xs">Primary language used for speech recognition and transcription</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <Select
             value={settings.language}
             onValueChange={(v) => update({ language: v })}
@@ -67,12 +69,12 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Default Writing Mode</CardTitle>
-          <CardDescription>AI will adapt its output to this mode</CardDescription>
+      <Card className="border-slate-200/80 shadow-sm bg-white">
+        <CardHeader className="border-b border-slate-100 pb-4">
+          <CardTitle className="text-base text-slate-900">Default Writing Mode</CardTitle>
+          <CardDescription className="text-xs">Tone and style persona applied by the AI Writing Assistant</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <Select
             value={settings.writingMode}
             onValueChange={(v) => update({ writingMode: v as WritingMode })}
@@ -82,58 +84,51 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Auto Punctuation</CardTitle>
-          <CardDescription>Automatically add punctuation to transcribed text</CardDescription>
+      <Card className="border-slate-200/80 shadow-sm bg-white">
+        <CardHeader className="border-b border-slate-100 pb-4">
+          <CardTitle className="text-base text-slate-900">Automatic Punctuation</CardTitle>
+          <CardDescription className="text-xs">Instruct speech engines to automatically capitalize and punctuate sentences</CardDescription>
         </CardHeader>
-        <CardContent>
-          <label className="flex items-center gap-3 cursor-pointer">
+        <CardContent className="pt-4">
+          <label className="flex items-center gap-3 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={settings.autoPunctuation}
               onChange={(e) => update({ autoPunctuation: e.target.checked })}
-              className="w-5 h-5 rounded border-gray-600 bg-gray-800 text-violet-600 focus:ring-violet-500 focus:ring-offset-gray-900"
+              className="w-4 h-4 rounded text-violet-600 focus:ring-violet-500/30 accent-violet-600 cursor-pointer"
             />
-            <span className="text-sm text-gray-300">Enable auto punctuation</span>
+            <span className="text-sm font-semibold text-slate-800">Enable automatic sentence punctuation & capitalization</span>
           </label>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Custom AI Instructions</CardTitle>
-          <CardDescription>These instructions will be included with every AI action</CardDescription>
+      <Card className="border-slate-200/80 shadow-sm bg-white">
+        <CardHeader className="border-b border-slate-100 pb-4">
+          <CardTitle className="text-base text-slate-900">Custom AI Directives</CardTitle>
+          <CardDescription className="text-xs">Persistent guidance appended to all Gemini AI transformations</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <Textarea
             value={settings.customInstructions}
             onChange={(e) => update({ customInstructions: e.target.value })}
-            placeholder="e.g., Always use British English spelling. Keep responses concise. Avoid passive voice..."
-            className="min-h-[120px]"
+            placeholder="e.g., Always use British English spelling. Keep responses concise. Avoid overly complex vocabulary..."
+            className="min-h-[120px] bg-slate-50/50"
           />
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">API Configuration</CardTitle>
-          <CardDescription>Gemini API key is configured via environment variables on the server</CardDescription>
+      <Card className="border-slate-200/80 shadow-sm bg-white">
+        <CardHeader className="border-b border-slate-100 pb-4">
+          <CardTitle className="text-base text-slate-900">Gemini API Configuration</CardTitle>
+          <CardDescription className="text-xs">Server-side credentials status</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="p-4 rounded-lg bg-gray-800/30 border border-gray-700/50">
-            <p className="text-sm text-gray-400 leading-relaxed">
-              To configure the Gemini API, create a <code className="text-violet-400 bg-gray-800 px-1.5 py-0.5 rounded text-xs">.env.local</code> file
-              in the project root with:
+        <CardContent className="pt-4">
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+            <p className="text-xs text-slate-600 leading-relaxed font-medium">
+              API credentials are kept server-side in your <code className="text-violet-700 bg-violet-50 font-semibold px-1.5 py-0.5 rounded border border-violet-200/70">.env.local</code> file and are never leaked to client browsers.
             </p>
-            <pre className="mt-3 p-3 rounded bg-gray-900 text-sm text-gray-300 font-mono overflow-x-auto">
-              GEMINI_API_KEY=your_api_key_here
-            </pre>
-            <p className="text-xs text-gray-500 mt-2">
-              Get your API key from{" "}
-              <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:underline">
-                Google AI Studio
-              </a>
+            <p className="text-xs text-slate-400 mt-2">
+              Gemini 3.5 AI is active and authenticated.
             </p>
           </div>
         </CardContent>
