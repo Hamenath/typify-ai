@@ -1,6 +1,9 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   Mic,
   Sparkles,
@@ -72,8 +75,63 @@ const MODES = [
 ];
 
 export default function LandingPage() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const featuresRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      // Apple-like smooth cinematic hero entrance
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      tl.fromTo(
+        titleRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1.1 }
+      )
+        .fromTo(
+          subtitleRef.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.9 },
+          "-=0.7"
+        )
+        .fromTo(
+          ctaRef.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.8 },
+          "-=0.6"
+        );
+
+      // Staggered reveal for feature cards
+      if (featuresRef.current) {
+        gsap.fromTo(
+          featuresRef.current.children,
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.08,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: featuresRef.current,
+              start: "top 82%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-slate-50 bg-grid text-slate-900 selection:bg-violet-100 selection:text-violet-900">
+    <div className="min-h-screen bg-slate-50 bg-grid text-slate-900 selection:bg-violet-100 selection:text-violet-900 overflow-x-hidden">
       {/* Header */}
       <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,7 +156,7 @@ export default function LandingPage() {
                 <Button variant="ghost" size="sm" className="font-medium">About</Button>
               </Link>
               <Link href="/dashboard">
-                <Button size="sm" className="font-semibold gap-1.5 shadow-sm">
+                <Button size="sm" className="font-semibold gap-1.5 shadow-sm apple-button">
                   Launch Studio <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
@@ -108,7 +166,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section ref={heroRef} className="relative overflow-hidden">
         {/* Soft background glow circles */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/6 left-1/4 w-[500px] h-[500px] bg-violet-200/40 rounded-full blur-[120px]" />
@@ -124,27 +182,27 @@ export default function LandingPage() {
             </div>
 
             {/* Title */}
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.1]">
+            <h1 ref={titleRef} className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.1]">
               Speak Naturally. <br />
               <span className="gradient-text">Type Intelligently.</span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+            <p ref={subtitleRef} className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
               Dictate with real-time speech recognition, transcribe audio with Google Gemini,
               and transform raw thoughts into polished, professional writing in seconds.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex items-center justify-center gap-4 flex-wrap">
+            <div ref={ctaRef} className="flex items-center justify-center gap-4 flex-wrap">
               <Link href="/dashboard">
-                <Button size="lg" className="px-8 font-semibold shadow-md gap-2">
+                <Button size="lg" className="px-8 font-semibold shadow-md gap-2 apple-button">
                   <Mic className="w-5 h-5" />
                   Start Voice Typing Free
                 </Button>
               </Link>
               <Link href="/ai-writer">
-                <Button variant="outline" size="lg" className="px-8 font-semibold gap-2 border-slate-300">
+                <Button variant="outline" size="lg" className="px-8 font-semibold gap-2 border-slate-300 apple-button">
                   <Sparkles className="w-5 h-5 text-violet-600" />
                   Try AI Writing Assistant
                 </Button>
@@ -184,13 +242,13 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div ref={featuresRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {FEATURES.map((feature) => {
               const Icon = feature.icon;
               return (
                 <div
                   key={feature.title}
-                  className="p-6 rounded-2xl border border-slate-200/80 bg-white hover:border-violet-300 hover:shadow-md transition-all duration-200 group"
+                  className="p-6 rounded-2xl border border-slate-200/80 bg-white apple-card group"
                 >
                   <div className="w-12 h-12 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center mb-4 text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors duration-200">
                     <Icon className="w-6 h-6" />
@@ -219,7 +277,7 @@ export default function LandingPage() {
             {MODES.map((mode) => (
               <span
                 key={mode}
-                className="px-5 py-2.5 rounded-full bg-white border border-slate-200 font-semibold text-sm text-slate-700 shadow-2xs hover:border-violet-300 hover:text-violet-700 hover:bg-violet-50/50 transition-colors"
+                className="px-5 py-2.5 rounded-full bg-white border border-slate-200 font-semibold text-sm text-slate-700 shadow-2xs hover:border-violet-300 hover:text-violet-700 hover:bg-violet-50/50 transition-colors apple-card cursor-default"
               >
                 {mode}
               </span>
@@ -254,7 +312,7 @@ export default function LandingPage() {
             ].map((action) => (
               <div
                 key={action}
-                className="flex items-center gap-2.5 p-3.5 rounded-xl bg-white border border-slate-200/80 text-sm font-semibold text-slate-800 shadow-2xs"
+                className="flex items-center gap-2.5 p-3.5 rounded-xl bg-white border border-slate-200/80 text-sm font-semibold text-slate-800 shadow-2xs apple-card"
               >
                 <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                 <span className="truncate">{action}</span>
@@ -276,7 +334,7 @@ export default function LandingPage() {
                 Join thousands of creators, professionals, and students using TYPIFY AI for voice typing.
               </p>
               <Link href="/dashboard">
-                <Button size="lg" className="bg-white text-violet-700 hover:bg-slate-100 shadow-lg px-8 font-bold gap-2">
+                <Button size="lg" className="bg-white text-violet-700 hover:bg-slate-100 shadow-lg px-8 font-bold gap-2 apple-button">
                   Launch Dashboard Free <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
